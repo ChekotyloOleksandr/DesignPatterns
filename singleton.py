@@ -13,5 +13,5 @@ class SomeClass(metaclass=SingletonMeta):
 
 
 a = SomeClass("First")
-b = SomeClass('Second')
+b = SomeClass('Secondd')
 print(id(a), id(b))  # Output: 1 1
