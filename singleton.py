@@ -1,17 +1,17 @@
-class SomeClass:
-    _instance = None
+class SingletonMeta(type):
+    _instances = {}
 
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class SomeClass(metaclass=SingletonMeta):
     def __init__(self, x: str):
-        if not self._instance:
-            self.x = x
-            self.__class__._instance = self
-        else:
-            self.x = self.__class__._instance.x
-
-    def __str__(self):
-        return self.x
+        self.x = x
 
 
 a = SomeClass("First")
 b = SomeClass('Second')
-print(a,b)  # Output: 1 1
+print(id(a), id(b))  # Output: 1 1
