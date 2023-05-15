@@ -32,9 +32,10 @@ class JsonAdapter:
     def __init__(self, service):
         self.service = service
 
-    def get_data(self,url):
+    def get_data(self, url):
         data = self.service.get_data(url)
         return json.dumps(data)
+
 
 json_service = GetJson()
 xml_service = GetXml()
@@ -44,5 +45,5 @@ xml_data = xml_service.get_data('https://www.w3schools.com/xml/note.xml')
 json_adapter = JsonAdapter(xml_service)
 
 print(json_data)
-print(type(xml_data))
-print(type(json_adapter.get_data('https://www.w3schools.com/xml/note.xml')))
+print(xml_data)
+print(type(json_adapter.get_data('https://www.w3schools.com/xml/note.xml')),json_adapter.get_data('https://www.w3schools.com/xml/note.xml'))

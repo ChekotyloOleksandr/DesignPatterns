@@ -1,29 +1,9 @@
 from abc import ABC, abstractmethod
-
-
-class Pill(ABC):
-    dosage_info = "Проконсультруйтесь с доктором"
-
-    def __init__(self, name, price):
-        self.name = name
-        self.price = price
-
-    @abstractmethod
-    def get_dosage(self):
-        pass
-
-    def get_dosage_info(self):
-        return self.dosage_info
-
-    def get_info(self):
-        return f"Цена {self.price}, наименование - {self.name}"
+from factory_method import Pill
 
 
 class Aspirin(Pill):
     dosage_info = "Используйте при головном боле."
-
-    def __init__(self, name, price):
-        super(Aspirin, self).__init__(name=name, price=price)
 
     def get_dosage(self):
         return "Принимайте таблетку раз в 4 часа."
@@ -36,14 +16,18 @@ class Paracetamol(Pill):
         return "Принимайте таблетку раз в 6 часов."
 
 
-class PillFactory(ABC):
+class FakeAspirin(Pill):
+    dosage_info = "Используйте при головном боле. Повышает температуру"
 
-    @abstractmethod
-    def create_pill(self, name, price):
-        pass
+    def get_dosage(self):
+        return "Принимайте таблетку раз в 2 часа."
 
-    def get_description(self):
-        return "Абстрактаная фабрика. Она плод вообржаения."
+
+class FakeParacetamol(Pill):
+    dosage_info = "Используйте при головном боле. Понижает температуру."
+
+    def get_dosage(self):
+        return "Принимайте таблетку раз в 5 часов."
 
 
 class PillFactory(ABC):
@@ -61,7 +45,7 @@ class PillFactory(ABC):
         pass
 
 
-class AspirinFactory(PillFactory):
+class LegalFactory(PillFactory):
 
     def create_aspirin(self, name, price):
         return Aspirin(name, price)
@@ -73,15 +57,40 @@ class AspirinFactory(PillFactory):
         return "Фабрика производит аспирин и парацетамол"
 
 
+class IllegalFactory(PillFactory):
+
+    def create_aspirin(self, name, price):
+        return FakeAspirin(name, price)
+
+    def create_paracetamol(self, name, price):
+        return FakeParacetamol(name, price)
+
+    def get_description(self):
+        return "Фабрика производит аспирин и парацетамол нелегально"
+
+
 if __name__ == '__main__':
-    aspirin_factory = AspirinFactory()
-    print(aspirin_factory.get_description())
-    aspirin = aspirin_factory.create_aspirin("Aspirin", 2.5)
+    legal_factory = LegalFactory()
+    print(legal_factory.get_description())
+    aspirin = legal_factory.create_aspirin("Aspirin", 2.5)
     print(aspirin.get_info())
     print(aspirin.get_dosage_info())
-    print(aspirin.get_dosage(), end="\n\n")
+    print(aspirin.get_dosage())
 
-    paracetamol = aspirin_factory.create_paracetamol("Paracetamol", 1.5)
+    paracetamol = legal_factory.create_paracetamol("Paracetamol", 1.5)
     print(paracetamol.get_info())
     print(paracetamol.get_dosage_info())
     print(paracetamol.get_dosage())
+    print()
+
+    ilegal_factory = IllegalFactory()
+    print(ilegal_factory.get_description())
+    fake_aspirin = ilegal_factory.create_aspirin("Fake Aspirin", 0.5)
+    print(fake_aspirin.get_info())
+    print(fake_aspirin.get_dosage_info())
+    print(fake_aspirin.get_dosage())
+
+    fake_paracetamol = ilegal_factory.create_paracetamol("Fake Paracetamol", 1.5)
+    print(fake_paracetamol.get_info())
+    print(fake_paracetamol.get_dosage_info())
+    print(fake_paracetamol.get_dosage())
